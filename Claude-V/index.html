@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RegIntel AI — Regulatory Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#D4A017;--gold-light:#F5E6A3;
+  --navy:#050E1C;--navy-mid:#0D1F35;--navy-hi:#132840;
+  --teal:#00B4A2;--teal-light:#80E8DF;--teal-dark:#007A70;
+  --coral:#FF6B4A;--coral-soft:#FF8C6E;
+  --text:#E8EDF5;--muted:#7A90A8;--border:rgba(0,180,162,0.22);
+  --card:rgba(13,31,53,0.95);
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── BG ── */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:float 8s ease-in-out infinite}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(0,180,162,0.08),transparent 70%);top:-100px;right:-100px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(212,160,23,0.06),transparent 70%);bottom:-80px;left:-80px;animation-delay:3s}
+.orb3{width:300px;height:300px;background:radial-gradient(circle,rgba(255,107,74,0.05),transparent 70%);top:40%;left:40%;animation-delay:5s}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+
+/* ── LAYOUT ── */
+.container{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 2rem}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,14,28,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;max-width:1400px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:0.8rem;text-decoration:none}
+.logo-icon{font-size:1.6rem;filter:drop-shadow(0 0 12px rgba(0,180,162,0.6));animation:pulse-glow 2s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{filter:drop-shadow(0 0 8px rgba(0,180,162,0.4))}50%{filter:drop-shadow(0 0 20px rgba(0,180,162,0.8))}}
+.logo-text{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;background:linear-gradient(90deg,#E8EDF5,var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--teal)}
+.nav-cta{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;border:none;padding:0.55rem 1.3rem;border-radius:30px;font-family:'Syne',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.04em}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,180,162,0.35)}
+
+/* ── HERO ── */
+.hero{padding:8rem 0 5rem;text-align:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,180,162,0.1);border:1px solid rgba(0,180,162,0.3);border-radius:30px;padding:0.4rem 1rem;font-size:0.8rem;color:var(--teal);margin-bottom:1.5rem;animation:fade-up 0.8s ease both}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem;animation:fade-up 0.8s ease 0.1s both}
+.hero h1 .grad{background:linear-gradient(135deg,#E8EDF5 20%,var(--teal) 60%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:1.15rem;color:var(--muted);max-width:650px;margin:0 auto 2.5rem;line-height:1.7;animation:fade-up 0.8s ease 0.2s both}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fade-up 0.8s ease 0.3s both}
+.btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;border:none;padding:0.9rem 2rem;border-radius:14px;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.25s;letter-spacing:0.05em}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,180,162,0.35)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);padding:0.9rem 2rem;border-radius:14px;font-family:'Syne',sans-serif;font-weight:600;font-size:1rem;cursor:pointer;transition:all 0.25s}
+.btn-secondary:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,180,162,0.05)}
+@keyframes fade-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── METRIC CARDS ── */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin:3rem 0}
+.metric-card{background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:20px;padding:1.5rem;text-align:center;transition:all 0.3s;animation:fade-up 0.8s ease both;position:relative;overflow:hidden}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),transparent)}
+.metric-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,180,162,0.15);border-color:rgba(0,180,162,0.4)}
+.metric-val{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--teal);display:block}
+.metric-lbl{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-top:0.3rem;display:block}
+.metric-delta{font-size:0.78rem;color:#50C878;margin-top:0.2rem;display:block}
+
+/* ── SECTIONS ── */
+.section{padding:5rem 0}
+.section-header{text-align:center;margin-bottom:3rem}
+.section-label{display:inline-block;background:rgba(0,180,162,0.1);border:1px solid rgba(0,180,162,0.3);color:var(--teal);font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.35rem 1rem;border-radius:20px;margin-bottom:1rem}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;margin-bottom:0.8rem}
+.section-sub{color:var(--muted);font-size:1rem;max-width:600px;margin:0 auto;line-height:1.7}
+
+/* ── CAROUSEL ── */
+.carousel-wrapper{position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border)}
+.carousel-track{display:flex;transition:transform 0.5s cubic-bezier(0.4,0,0.2,1)}
+.carousel-slide{min-width:100%;padding:2.5rem}
+.slide-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.slide-source{background:rgba(0,180,162,0.15);color:var(--teal);font-size:0.8rem;font-weight:700;letter-spacing:0.1em;padding:0.35rem 0.9rem;border-radius:20px;border:1px solid rgba(0,180,162,0.3)}
+.slide-risk{padding:0.35rem 0.9rem;border-radius:20px;font-size:0.8rem;font-weight:700}
+.risk-high{background:rgba(255,77,77,0.12);color:#FF6B6B;border:1px solid rgba(255,77,77,0.3)}
+.risk-medium{background:rgba(212,160,23,0.12);color:var(--gold);border:1px solid rgba(212,160,23,0.3)}
+.risk-low{background:rgba(80,200,120,0.12);color:#50C878;border:1px solid rgba(80,200,120,0.3)}
+.slide-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:0.8rem;line-height:1.3}
+.slide-date{color:var(--muted);font-size:0.82rem;margin-bottom:1.2rem}
+.slide-summary{color:#A8C0D0;font-size:0.92rem;line-height:1.7;margin-bottom:1.5rem}
+.slide-diff{background:rgba(0,0,0,0.4);border-radius:12px;padding:1.2rem;font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.8;border:1px solid rgba(0,0,0,0.5)}
+.diff-add{color:#50C878}.diff-rem{color:#FF6B6B}.diff-meta{color:var(--muted)}
+.carousel-nav{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1.5rem;border-top:1px solid var(--border)}
+.carousel-btn{background:rgba(0,180,162,0.1);border:1px solid var(--border);color:var(--teal);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.carousel-btn:hover{background:rgba(0,180,162,0.2);border-color:var(--teal)}
+.carousel-dots{display:flex;gap:0.5rem}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);cursor:pointer;transition:all 0.2s}
+.dot.active{background:var(--teal);width:24px;border-radius:4px}
+
+/* ── ANALYSIS PANEL ── */
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.analysis-panel{background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:24px;padding:2rem}
+.panel-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:1.5rem;color:var(--teal);display:flex;align-items:center;gap:0.5rem}
+.policy-item{background:rgba(0,0,0,0.3);border:1px solid rgba(0,180,162,0.15);border-radius:12px;padding:1rem;margin-bottom:0.8rem;transition:all 0.2s;cursor:pointer}
+.policy-item:hover{border-color:var(--teal);background:rgba(0,180,162,0.05)}
+.policy-id{font-size:0.72rem;color:var(--teal);font-weight:700;letter-spacing:0.08em;margin-bottom:0.3rem}
+.policy-title{font-size:0.88rem;font-weight:600;margin-bottom:0.3rem}
+.policy-preview{font-size:0.78rem;color:var(--muted);line-height:1.5}
+.impact-output{background:rgba(0,0,0,0.3);border-radius:12px;padding:1.5rem;min-height:200px;font-size:0.88rem;line-height:1.7;color:#A8C0D0}
+.impact-output .point{margin-bottom:0.8rem;padding-left:1rem;border-left:2px solid var(--teal)}
+.impact-output .point-label{color:var(--teal);font-weight:700;font-size:0.8rem;letter-spacing:0.05em;display:block;margin-bottom:0.2rem}
+
+/* ── CHATBOT ── */
+.chat-container{background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;height:600px}
+.chat-header{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem}
+.chat-avatar{width:42px;height:42px;background:linear-gradient(135deg,var(--teal),var(--teal-dark));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.chat-status{display:flex;align-items:center;gap:0.5rem}
+.status-dot{width:8px;height:8px;background:#50C878;border-radius:50%;animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.chat-messages{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;scrollbar-width:thin;scrollbar-color:var(--teal) var(--navy-hi)}
+.msg{display:flex;gap:0.8rem;align-items:flex-start;animation:msg-in 0.3s ease}
+@keyframes msg-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.msg-bubble{padding:0.85rem 1.1rem;border-radius:16px;font-size:0.88rem;line-height:1.6;max-width:75%}
+.msg.bot .msg-bubble{background:rgba(19,40,64,0.9);border:1px solid rgba(0,180,162,0.2);border-radius:4px 16px 16px 16px;color:#D0DCE8}
+.msg.user .msg-bubble{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;border-radius:16px 16px 4px 16px}
+.msg-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;border:1px solid var(--border);background:var(--navy-hi)}
+.chat-input-row{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:0.8rem}
+.chat-input{flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:12px;padding:0.75rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s}
+.chat-input:focus{border-color:var(--teal)}
+.chat-send{background:linear-gradient(135deg,var(--teal),var(--teal-dark));border:none;color:white;width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:1rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.chat-send:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(0,180,162,0.35)}
+.chat-suggestions{padding:0 1.5rem 1rem;display:flex;gap:0.5rem;flex-wrap:wrap}
+.sug-chip{background:rgba(0,180,162,0.08);border:1px solid rgba(0,180,162,0.25);color:var(--teal);font-size:0.75rem;padding:0.3rem 0.75rem;border-radius:20px;cursor:pointer;transition:all 0.2s}
+.sug-chip:hover{background:rgba(0,180,162,0.18);border-color:var(--teal)}
+
+/* ── VOICE BOT ── */
+.voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.voice-panel{background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:24px;padding:2.5rem;text-align:center}
+.voice-orb{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--navy-hi),var(--navy-mid));border:3px solid var(--teal);margin:0 auto 2rem;display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;transition:all 0.3s;cursor:pointer}
+.voice-orb::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(0,180,162,0.3);animation:ring-pulse 2s ease-in-out infinite}
+.voice-orb::after{content:'';position:absolute;inset:-18px;border-radius:50%;border:1px solid rgba(0,180,162,0.15);animation:ring-pulse 2s ease-in-out 0.5s infinite}
+@keyframes ring-pulse{0%,100%{transform:scale(1);opacity:0.7}50%{transform:scale(1.05);opacity:0.3}}
+.voice-orb.active{border-color:var(--coral);box-shadow:0 0 40px rgba(255,107,74,0.3)}
+.voice-orb.active::before{border-color:rgba(255,107,74,0.5);animation:ring-pulse-fast 0.8s ease-in-out infinite}
+@keyframes ring-pulse-fast{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.voice-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:0.5rem}
+.voice-sub{color:var(--muted);font-size:0.88rem;margin-bottom:2rem;line-height:1.6}
+.lang-select{width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:12px;padding:0.75rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;margin-bottom:1rem;outline:none;font-size:0.9rem}
+.voice-btn{width:100%;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;border:none;padding:1rem;border-radius:14px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.25s;letter-spacing:0.05em;margin-top:0.5rem}
+.voice-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,180,162,0.3)}
+.voice-waves{display:flex;align-items:center;justify-content:center;gap:4px;height:50px;margin:1rem 0}
+.wave-bar{width:4px;border-radius:2px;background:var(--teal);animation:wave-anim 1s ease-in-out infinite}
+.wave-bar:nth-child(1){animation-delay:0s;height:20px}
+.wave-bar:nth-child(2){animation-delay:0.1s;height:35px}
+.wave-bar:nth-child(3){animation-delay:0.2s;height:28px}
+.wave-bar:nth-child(4){animation-delay:0.3s;height:42px}
+.wave-bar:nth-child(5){animation-delay:0.4s;height:32px}
+.wave-bar:nth-child(6){animation-delay:0.5s;height:22px}
+.wave-bar:nth-child(7){animation-delay:0.4s;height:38px}
+.wave-bar:nth-child(8){animation-delay:0.3s;height:25px}
+@keyframes wave-anim{0%,100%{transform:scaleY(0.4)}50%{transform:scaleY(1)}}
+.wave-bar.stopped{animation:none;transform:scaleY(0.3)}
+.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin-top:1.5rem}
+.lang-card{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;padding:0.8rem;text-align:center;cursor:pointer;transition:all 0.2s}
+.lang-card:hover,.lang-card.active{border-color:var(--teal);background:rgba(0,180,162,0.08)}
+.lang-flag{font-size:1.5rem;display:block;margin-bottom:0.3rem}
+.lang-name{font-size:0.8rem;font-weight:600}
+.lang-native{font-size:0.75rem;color:var(--muted)}
+
+/* ── 3D CARD FEATURE GRID ── */
+.features-3d{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;perspective:1000px}
+.feature-card{background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:20px;padding:2rem;transition:all 0.4s;transform-style:preserve-3d;cursor:default;position:relative;overflow:hidden}
+.feature-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,180,162,0.03),transparent);opacity:0;transition:opacity 0.3s}
+.feature-card:hover{transform:rotateX(-4deg) rotateY(4deg) translateY(-8px);box-shadow:0 24px 60px rgba(0,0,0,0.4),0 0 40px rgba(0,180,162,0.1);border-color:rgba(0,180,162,0.4)}
+.feature-card:hover::after{opacity:1}
+.feature-icon{font-size:2.5rem;margin-bottom:1.2rem;display:block;filter:drop-shadow(0 0 12px rgba(0,180,162,0.3))}
+.feature-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:0.6rem}
+.feature-desc{font-size:0.86rem;color:var(--muted);line-height:1.65}
+.feature-tag{display:inline-block;margin-top:1rem;font-size:0.72rem;color:var(--teal);letter-spacing:0.08em;font-weight:600;text-transform:uppercase}
+
+/* ── PIPELINE DIAGRAM ── */
+.pipeline{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;padding:3rem 0;overflow-x:auto}
+.pipe-step{display:flex;flex-direction:column;align-items:center;width:120px;text-align:center;animation:fade-up 0.8s ease both}
+.pipe-icon{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--navy-hi),var(--card));border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:0.6rem;transition:all 0.3s;position:relative}
+.pipe-icon::before{content:'';position:absolute;inset:-2px;border-radius:18px;background:linear-gradient(135deg,var(--teal),transparent);z-index:-1;opacity:0;transition:opacity 0.3s}
+.pipe-step:hover .pipe-icon{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,180,162,0.2)}
+.pipe-step:hover .pipe-icon::before{opacity:1}
+.pipe-label{font-size:0.72rem;color:var(--muted);font-weight:600;letter-spacing:0.06em}
+.pipe-arrow{color:rgba(0,180,162,0.4);font-size:1.3rem;margin:0 0.2rem;padding-bottom:1.5rem}
+
+/* ── REPORT SECTION ── */
+.report-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:2rem}
+.report-list{display:flex;flex-direction:column;gap:0.8rem}
+.report-item{background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.5rem;cursor:pointer;transition:all 0.2s;border-left:4px solid transparent}
+.report-item.selected,.report-item:hover{border-left-color:var(--teal);background:rgba(0,180,162,0.05)}
+.report-item-source{font-size:0.72rem;color:var(--teal);font-weight:700;letter-spacing:0.08em;margin-bottom:0.3rem}
+.report-item-title{font-size:0.88rem;font-weight:600;margin-bottom:0.2rem}
+.report-item-date{font-size:0.75rem;color:var(--muted)}
+.report-detail{background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:20px;padding:2rem;overflow-y:auto;max-height:600px}
+.report-json{background:rgba(0,0,0,0.5);border-radius:12px;padding:1.5rem;font-family:'Courier New',monospace;font-size:0.78rem;line-height:1.8;color:#B8D4E8;white-space:pre-wrap;border:1px solid rgba(0,0,0,0.5)}
+.json-key{color:var(--teal-light)}
+.json-str{color:var(--gold-light)}
+.json-num{color:var(--coral-soft)}
+
+/* ── FOOTER ── */
+footer{background:var(--card);border-top:1px solid var(--border);padding:3rem 0;text-align:center;color:var(--muted);font-size:0.85rem;position:relative;z-index:1}
+.footer-logo{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--teal);margin-bottom:0.5rem}
+.footer-sources{display:flex;gap:1.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap}
+.src-badge{background:rgba(0,180,162,0.1);border:1px solid rgba(0,180,162,0.25);color:var(--teal);padding:0.3rem 0.8rem;border-radius:20px;font-size:0.78rem;font-weight:600}
+
+/* ── LOADING SPINNER ── */
+.typing{display:flex;gap:4px;align-items:center;padding:0.5rem 0}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:typing-dot 1.2s ease-in-out infinite}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes typing-dot{0%,80%,100%{transform:scale(0.7);opacity:0.4}40%{transform:scale(1);opacity:1}}
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  .analysis-grid,.voice-grid,.features-3d,.report-grid{grid-template-columns:1fr}
+  .metrics-row{grid-template-columns:repeat(2,1fr)}
+  .pipeline{gap:0.3rem}
+  .pipe-arrow{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Background orbs -->
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-icon">🛡️</span>
+      <span class="logo-text">RegIntel AI</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#feed">Live Feed</a></li>
+      <li><a href="#analysis">Analysis</a></li>
+      <li><a href="#chatbot">Chatbot</a></li>
+      <li><a href="#voice">Voice Bot</a></li>
+      <li><a href="#reports">Reports</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('chatbot').scrollIntoView({behavior:'smooth'})">Try Chatbot →</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">✦ Powered by LangChain · ChromaDB · PyMuPDF</div>
+    <h1><span class="grad">Regulatory Intelligence</span><br>at the Speed of AI</h1>
+    <p class="hero-sub">Automated compliance monitoring for RBI, SEBI & MCA. Detects changes, maps policy impact, and generates reports in minutes — not weeks.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('feed').scrollIntoView({behavior:'smooth'})">📡 View Live Feed</button>
+      <button class="btn-secondary" onclick="document.getElementById('chatbot').scrollIntoView({behavior:'smooth'})">💬 Ask Chatbot</button>
+    </div>
+  </div>
+</section>
+
+<!-- Metrics -->
+<div class="container">
+  <div class="metrics-row">
+    <div class="metric-card" style="animation-delay:0.1s"><span class="metric-val" id="cnt-circulars">0</span><span class="metric-lbl">Circulars Tracked</span><span class="metric-delta">↑ +12 this week</span></div>
+    <div class="metric-card" style="animation-delay:0.2s"><span class="metric-val" id="cnt-alerts">0</span><span class="metric-lbl">High-Risk Alerts</span><span class="metric-delta">↑ +2 today</span></div>
+    <div class="metric-card" style="animation-delay:0.3s"><span class="metric-val" id="cnt-policies">0</span><span class="metric-lbl">Policies Indexed</span><span class="metric-delta">↑ +34 this month</span></div>
+    <div class="metric-card" style="animation-delay:0.4s"><span class="metric-val" id="cnt-time">—</span><span class="metric-lbl">Avg Report Time</span><span class="metric-delta">↓ 0.8 min faster</span></div>
+  </div>
+</div>
+
+<!-- Pipeline -->
+<div class="container">
+  <div class="section-header reveal">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">6-Agent AI Pipeline</h2>
+  </div>
+  <div class="pipeline">
+    <div class="pipe-step" style="animation-delay:0.1s"><div class="pipe-icon">🌐</div><div class="pipe-label">Scraper<br>Agent</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:0.2s"><div class="pipe-icon">📄</div><div class="pipe-label">Parser<br>Agent</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:0.3s"><div class="pipe-icon">🔍</div><div class="pipe-label">Diff<br>Detector</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:0.4s"><div class="pipe-icon">🗄️</div><div class="pipe-label">Knowledge<br>Base</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:0.5s"><div class="pipe-icon">🤖</div><div class="pipe-label">LLM<br>Reasoning</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="animation-delay:0.6s"><div class="pipe-icon">📊</div><div class="pipe-label">Report<br>Generator</div></div>
+  </div>
+</div>
+
+<!-- Features 3D -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything You Need for Compliance</h2>
+    </div>
+    <div class="features-3d">
+      <div class="feature-card reveal"><span class="feature-icon">📡</span><div class="feature-title">Live Regulatory Feed</div><div class="feature-desc">Auto-scrapes RBI, SEBI, and MCA portals every 24 hours. Extracts PDFs using BeautifulSoup and PyMuPDF. Never miss a circular.</div><span class="feature-tag">BeautifulSoup · PyMuPDF</span></div>
+      <div class="feature-card reveal" style="transition-delay:0.1s"><span class="feature-icon">🔍</span><div class="feature-title">Smart Diff Detection</div><div class="feature-desc">Compares old vs new regulation text with Python difflib. Highlights additions, removals, and semantic changes with contextual diffs.</div><span class="feature-tag">difflib · Semantic Search</span></div>
+      <div class="feature-card reveal" style="transition-delay:0.2s"><span class="feature-icon">🗄️</span><div class="feature-title">Vector Policy Mapping</div><div class="feature-desc">ChromaDB indexes your entire policy corpus. When regulations change, instantly find which internal documents are affected via semantic search.</div><span class="feature-tag">ChromaDB · Embeddings</span></div>
+      <div class="feature-card reveal" style="transition-delay:0.3s"><span class="feature-icon">🤖</span><div class="feature-title">LangChain Analysis</div><div class="feature-desc">GPT-4 powered agents analyze regulatory impact, assess risk level, draft policy amendments, and suggest action items — automatically.</div><span class="feature-tag">LangChain · GPT-4</span></div>
+      <div class="feature-card reveal" style="transition-delay:0.4s"><span class="feature-icon">🔊</span><div class="feature-title">Multilingual Voice Bot</div><div class="feature-desc">Explains complex regulations in 8 Indian languages via audio. Uses gTTS for real-time speech synthesis. Perfect for teams across India.</div><span class="feature-tag">gTTS · 8 Languages</span></div>
+      <div class="feature-card reveal" style="transition-delay:0.5s"><span class="feature-icon">💬</span><div class="feature-title">Regulatory Chatbot</div><div class="feature-desc">RAG-based chatbot lets anyone query RBI/SEBI/MCA rules in plain language. Retrieves from a curated knowledge base before answering.</div><span class="feature-tag">RAG · Natural Language</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Live Feed Carousel -->
+<section class="section" id="feed">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Live Feed</div>
+      <h2 class="section-title">Latest Regulatory Updates</h2>
+      <p class="section-sub">Real-time tracking of RBI, SEBI, and MCA circulars with AI-powered risk assessment</p>
+    </div>
+    <div class="carousel-wrapper reveal">
+      <div class="carousel-track" id="carouselTrack">
+
+        <!-- Slide 1 -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="slide-source">🏦 RBI</span>
+            <span class="slide-risk risk-high">🔴 HIGH RISK</span>
+          </div>
+          <div class="slide-title">Master Direction — Know Your Customer (KYC) Amendment 2024</div>
+          <div class="slide-date">📅 15 November 2024 · Banking / KYC</div>
+          <div class="slide-summary">RBI mandates re-verification of pre-2020 accounts via Aadhaar eKYC, beneficial ownership declarations for corporate accounts above ₹10L, and Video KYC support. Non-compliance attracts up to ₹1 crore penalty under PMLA.</div>
+          <div class="slide-diff">
+            <div class="diff-add">+ eKYC re-verification mandatory for pre-2020 accounts</div>
+            <div class="diff-add">+ Beneficial ownership declaration for corporate accounts &gt; ₹10L</div>
+            <div class="diff-rem">- Removed: Self-declaration waiver for KYC-compliant customers</div>
+            <div class="diff-add">+ New: 90-day compliance deadline enforced</div>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="slide-source">📈 SEBI</span>
+            <span class="slide-risk risk-high">🔴 HIGH RISK</span>
+          </div>
+          <div class="slide-title">Enhanced Disclosure Requirements for IPO Filings — ICDR Amendment</div>
+          <div class="slide-date">📅 28 October 2024 · Capital Markets / IPO</div>
+          <div class="slide-summary">SEBI extends related-party disclosure window from 3 to 5 years. ESG/BRSR reporting mandatory for turnover above ₹500 crore. Merchant bankers must certify DRHP completeness under personal liability.</div>
+          <div class="slide-diff">
+            <div class="diff-add">+ RPT disclosure window: 3 years → 5 years</div>
+            <div class="diff-add">+ ESG/BRSR mandatory for turnover &gt; ₹500 Cr</div>
+            <div class="diff-add">+ Merchant banker personal liability certification</div>
+            <div class="diff-rem">- Removed: Simplified disclosure for SME-IPOs &lt; ₹50 Cr</div>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="slide-source">🏛️ MCA</span>
+            <span class="slide-risk risk-medium">🟡 MEDIUM RISK</span>
+          </div>
+          <div class="slide-title">Companies (Amendment) Rules 2024 — Annual Filing Compliance</div>
+          <div class="slide-date">📅 10 September 2024 · Corporate Compliance</div>
+          <div class="slide-summary">MCA reduces AOC-4 filing deadline to 45 days for listed companies, mandates XBRL for all public companies regardless of turnover, and introduces new e-CSR-1 form for CSR spends above ₹50 lakh.</div>
+          <div class="slide-diff">
+            <div class="diff-add">+ AOC-4 filing: 60 days → 45 days for listed companies</div>
+            <div class="diff-add">+ XBRL mandatory for ALL public companies (no turnover threshold)</div>
+            <div class="diff-add">+ New e-CSR-1 form for CSR spends &gt; ₹50L</div>
+            <div class="diff-rem">- Removed: Physical filing option for certain forms</div>
+          </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="slide-source">📈 SEBI</span>
+            <span class="slide-risk risk-high">🔴 HIGH RISK</span>
+          </div>
+          <div class="slide-title">Cybersecurity & Cyber Resilience Framework (CSCRF) for Market Infrastructure</div>
+          <div class="slide-date">📅 5 July 2024 · Cybersecurity / Technology</div>
+          <div class="slide-summary">SEBI mandates CISO appointment, cyber incident reporting within 6 hours (down from 24h), quarterly VAPT by CERT-In auditor, and 3-year technology roadmap submission by December 2024 for all MIIs and large brokers.</div>
+          <div class="slide-diff">
+            <div class="diff-add">+ CISO appointment mandatory, reports to Board</div>
+            <div class="diff-add">+ Cyber incident reporting: 24h → 6 hours</div>
+            <div class="diff-add">+ Quarterly VAPT by CERT-In empanelled auditor</div>
+            <div class="diff-rem">- Removed: Annual self-certification option</div>
+          </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="slide-source">🏦 RBI</span>
+            <span class="slide-risk risk-high">🔴 HIGH RISK</span>
+          </div>
+          <div class="slide-title">Prudential Framework for Resolution of Stressed Assets — Updated</div>
+          <div class="slide-date">📅 22 August 2024 · Banking / NPA</div>
+          <div class="slide-summary">ICA signing deadline extended to 45 days post-SMA-2 classification. Provisioning requirement increased to 35% (from 20%) for accounts in resolution beyond 180 days. Real-time CRILC integration mandatory by March 2025.</div>
+          <div class="slide-diff">
+            <div class="diff-add">+ ICA deadline: 30 days → 45 days post-SMA-2</div>
+            <div class="diff-add">+ Provision requirement: 20% → 35% (beyond 180 days)</div>
+            <div class="diff-add">+ Real-time CRILC integration by March 2025</div>
+            <div class="diff-rem">- Removed: 60-day grace period for restructuring</div>
+          </div>
+        </div>
+
+      </div><!-- end track -->
+      <div class="carousel-nav">
+        <button class="carousel-btn" id="prevBtn">←</button>
+        <div class="carousel-dots" id="dots"></div>
+        <button class="carousel-btn" id="nextBtn">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Analysis Panel -->
+<section class="section" id="analysis">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Analysis Engine</div>
+      <h2 class="section-title">AI-Powered Impact Assessment</h2>
+      <p class="section-sub">Click any regulation below to see how it maps to your internal policies and what actions are needed</p>
+    </div>
+    <div class="analysis-grid">
+      <div class="analysis-panel reveal">
+        <div class="panel-title">🏛️ Policy Knowledge Base (ChromaDB)</div>
+        <div id="policyList">
+          <div class="policy-item" onclick="analyzeImpact(0)"><div class="policy-id">POL-KYC-001</div><div class="policy-title">Customer KYC & Onboarding Policy</div><div class="policy-preview">Governs KYC procedures for customer onboarding, Aadhaar eKYC, corporate accounts...</div></div>
+          <div class="policy-item" onclick="analyzeImpact(1)"><div class="policy-id">POL-LOAN-002</div><div class="policy-title">Loan Origination & Approval Policy</div><div class="policy-preview">Loan processing: credit review, CIBIL, disbursement, RBI fair practices...</div></div>
+          <div class="policy-item" onclick="analyzeImpact(2)"><div class="policy-id">POL-IPO-003</div><div class="policy-title">Capital Market & IPO Compliance</div><div class="policy-preview">DRHP review, related-party transactions, merchant banker engagement...</div></div>
+          <div class="policy-item" onclick="analyzeImpact(3)"><div class="policy-id">POL-NPA-004</div><div class="policy-title">NPA Management Policy</div><div class="policy-preview">SMA classification, ICA process, provisioning norms, resolution plans...</div></div>
+          <div class="policy-item" onclick="analyzeImpact(4)"><div class="policy-id">POL-CYBER-005</div><div class="policy-title">Cybersecurity & Information Security</div><div class="policy-preview">ISO 27001, CISO reporting, incident handling, VAPT, encryption...</div></div>
+          <div class="policy-item" onclick="analyzeImpact(5)"><div class="policy-id">POL-CSR-006</div><div class="policy-title">Corporate Social Responsibility Policy</div><div class="policy-preview">CSR spending, committee oversight, annual reporting, unspent funds...</div></div>
+        </div>
+      </div>
+      <div class="analysis-panel reveal" style="transition-delay:0.1s">
+        <div class="panel-title">🤖 AI Impact Analysis</div>
+        <div class="impact-output" id="impactOutput">
+          <div style="text-align:center;padding:2rem;color:var(--muted);">
+            <div style="font-size:2rem;margin-bottom:1rem;opacity:0.4;">←</div>
+            <p>Click any policy on the left to see AI-powered impact analysis against current regulations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chatbot -->
+<section class="section" id="chatbot">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">AI Chatbot</div>
+      <h2 class="section-title">Ask Anything About Regulations</h2>
+      <p class="section-sub">RAG-powered chatbot with access to all RBI, SEBI, and MCA guidelines</p>
+    </div>
+    <div class="chat-container reveal">
+      <div class="chat-header">
+        <div class="chat-avatar">🛡️</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;">RegIntel Assistant</div>
+          <div class="chat-status"><span class="status-dot"></span><span style="font-size:0.78rem;color:var(--muted);">Online — RBI · SEBI · MCA</span></div>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg bot">
+          <div class="msg-icon">🛡️</div>
+          <div class="msg-bubble">👋 Hello! I'm RegIntel AI. Ask me anything about RBI, SEBI, or MCA regulations — compliance requirements, filing deadlines, penalty clauses, KYC norms, and more!</div>
+        </div>
+      </div>
+      <div class="chat-suggestions">
+        <span class="sug-chip" onclick="sendSuggestion('What are the latest RBI KYC requirements?')">RBI KYC 2024</span>
+        <span class="sug-chip" onclick="sendSuggestion('SEBI IPO disclosure requirements?')">SEBI IPO Rules</span>
+        <span class="sug-chip" onclick="sendSuggestion('MCA annual filing deadlines?')">MCA Filing Deadlines</span>
+        <span class="sug-chip" onclick="sendSuggestion('What is the SEBI cybersecurity framework?')">SEBI Cybersecurity</span>
+        <span class="sug-chip" onclick="sendSuggestion('Explain PPIRP for MSMEs')">PPIRP MSMEs</span>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" placeholder="Ask about regulations, compliance, penalties, deadlines..." onkeypress="if(event.key==='Enter')sendMessage()">
+        <button class="chat-send" onclick="sendMessage()">↑</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Voice Bot -->
+<section class="section" id="voice">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Voice Assistant</div>
+      <h2 class="section-title">Regulations in Your Language</h2>
+      <p class="section-sub">Our AI explains complex regulations in 8 Indian languages so everyone on your team can understand</p>
+    </div>
+    <div class="voice-grid">
+      <div class="voice-panel reveal">
+        <div class="voice-orb" id="voiceOrb" onclick="toggleVoice()">🎙️</div>
+        <div class="voice-title">Multilingual Voice Guide</div>
+        <div class="voice-sub">Select a regulation and language, then click the microphone to hear an audio explanation tailored for your team.</div>
+        <select class="lang-select" id="regSelect">
+          <option value="0">RBI KYC Amendment 2024</option>
+          <option value="1">SEBI IPO Disclosure Rules</option>
+          <option value="2">MCA Annual Filing Compliance</option>
+          <option value="3">SEBI Cybersecurity Framework</option>
+          <option value="4">RBI Stressed Assets Framework</option>
+        </select>
+        <select class="lang-select" id="langSelect">
+          <option value="en">English</option>
+          <option value="hi">Hindi — हिंदी</option>
+          <option value="ta">Tamil — தமிழ்</option>
+          <option value="te">Telugu — తెలుగు</option>
+          <option value="bn">Bengali — বাংলা</option>
+          <option value="mr">Marathi — मराठी</option>
+          <option value="gu">Gujarati — ગુજરાતી</option>
+          <option value="kn">Kannada — ಕನ್ನಡ</option>
+        </select>
+        <div class="voice-waves" id="voiceWaves">
+          <div class="wave-bar stopped"></div><div class="wave-bar stopped"></div><div class="wave-bar stopped"></div><div class="wave-bar stopped"></div><div class="wave-bar stopped"></div><div class="wave-bar stopped"></div><div class="wave-bar stopped"></div><div class="wave-bar stopped"></div>
+        </div>
+        <div id="voiceTranscript" style="background:rgba(0,0,0,0.3);border-radius:12px;padding:1rem;font-size:0.85rem;color:#A8C0D0;text-align:left;line-height:1.6;min-height:60px;margin-top:0.5rem;"></div>
+        <button class="voice-btn" onclick="playVoiceExplanation()">🔊 Play Voice Explanation</button>
+      </div>
+      <div class="reveal" style="transition-delay:0.1s">
+        <div style="background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:1.5rem;">
+          <div class="panel-title">🌐 Supported Languages</div>
+          <div class="lang-grid">
+            <div class="lang-card active" onclick="setLang('en',this)"><span class="lang-flag">🌐</span><div class="lang-name">English</div><div class="lang-native">English</div></div>
+            <div class="lang-card" onclick="setLang('hi',this)"><span class="lang-flag">🇮🇳</span><div class="lang-name">Hindi</div><div class="lang-native">हिंदी</div></div>
+            <div class="lang-card" onclick="setLang('ta',this)"><span class="lang-flag">🇮🇳</span><div class="lang-name">Tamil</div><div class="lang-native">தமிழ்</div></div>
+            <div class="lang-card" onclick="setLang('te',this)"><span class="lang-flag">🇮🇳</span><div class="lang-name">Telugu</div><div class="lang-native">తెలుగు</div></div>
+            <div class="lang-card" onclick="setLang('bn',this)"><span class="lang-flag">🇮🇳</span><div class="lang-name">Bengali</div><div class="lang-native">বাংলা</div></div>
+            <div class="lang-card" onclick="setLang('mr',this)"><span class="lang-flag">🇮🇳</span><div class="lang-name">Marathi</div><div class="lang-native">मराठी</div></div>
+            <div class="lang-card" onclick="setLang('gu',this)"><span class="lang-flag">🇮🇳</span><div class="lang-name">Gujarati</div><div class="lang-native">ગુજરાતી</div></div>
+            <div class="lang-card" onclick="setLang('kn',this)"><span class="lang-flag">🇮🇳</span><div class="lang-name">Kannada</div><div class="lang-native">ಕನ್ನಡ</div></div>
+          </div>
+        </div>
+        <div style="background:linear-gradient(135deg,var(--card),var(--navy-hi));border:1px solid var(--border);border-radius:20px;padding:2rem;">
+          <div class="panel-title">💡 How Voice Bot Works</div>
+          <div style="display:flex;flex-direction:column;gap:0.8rem;font-size:0.85rem;color:#A8C0D0;line-height:1.6;">
+            <div style="display:flex;gap:0.8rem;align-items:flex-start;"><span style="background:rgba(0,180,162,0.15);color:var(--teal);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">1</span><span>Select the regulation you want explained and choose your preferred language</span></div>
+            <div style="display:flex;gap:0.8rem;align-items:flex-start;"><span style="background:rgba(0,180,162,0.15);color:var(--teal);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">2</span><span>The AI translates and simplifies the regulation into clear, plain language</span></div>
+            <div style="display:flex;gap:0.8rem;align-items:flex-start;"><span style="background:rgba(0,180,162,0.15);color:var(--teal);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">3</span><span>Google TTS converts the text to natural-sounding speech in your language</span></div>
+            <div style="display:flex;gap:0.8rem;align-items:flex-start;"><span style="background:rgba(0,180,162,0.15);color:var(--teal);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">4</span><span>Play the audio for your entire team — no legal knowledge required!</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reports -->
+<section class="section" id="reports">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Reports</div>
+      <h2 class="section-title">Structured Compliance Reports</h2>
+      <p class="section-sub">Machine-readable JSON reports with full audit trail, risk scores, and recommended actions</p>
+    </div>
+    <div class="report-grid">
+      <div class="report-list reveal">
+        <div class="report-item selected" onclick="showReport(0,this)"><div class="report-item-source">🏦 RBI · HIGH RISK</div><div class="report-item-title">KYC Amendment 2024</div><div class="report-item-date">RPT-20241115 · Nov 15, 2024</div></div>
+        <div class="report-item" onclick="showReport(1,this)"><div class="report-item-source">📈 SEBI · HIGH RISK</div><div class="report-item-title">IPO Enhanced Disclosures</div><div class="report-item-date">RPT-20241028 · Oct 28, 2024</div></div>
+        <div class="report-item" onclick="showReport(2,this)"><div class="report-item-source">🏛️ MCA · MEDIUM RISK</div><div class="report-item-title">Annual Filing Amendment</div><div class="report-item-date">RPT-20240910 · Sep 10, 2024</div></div>
+        <div class="report-item" onclick="showReport(3,this)"><div class="report-item-source">📈 SEBI · HIGH RISK</div><div class="report-item-title">Cybersecurity Framework</div><div class="report-item-date">RPT-20240705 · Jul 5, 2024</div></div>
+        <div class="report-item" onclick="showReport(4,this)"><div class="report-item-source">🏦 RBI · HIGH RISK</div><div class="report-item-title">Stressed Assets Framework</div><div class="report-item-date">RPT-20240822 · Aug 22, 2024</div></div>
+      </div>
+      <div class="report-detail reveal" style="transition-delay:0.1s">
+        <div class="panel-title">📄 Report Detail</div>
+        <div class="report-json" id="reportJson"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">🛡️ RegIntel AI</div>
+    <p>Automated Regulatory Intelligence for Indian Financial Services</p>
+    <div class="footer-sources">
+      <span class="src-badge">RBI — Reserve Bank of India</span>
+      <span class="src-badge">SEBI — Securities Exchange Board of India</span>
+      <span class="src-badge">MCA — Ministry of Corporate Affairs</span>
+    </div>
+    <p style="margin-top:1.5rem;font-size:0.78rem;opacity:0.5;">Built with Python · LangChain · ChromaDB · PyMuPDF · BeautifulSoup · gTTS · Streamlit</p>
+  </div>
+</footer>
+
+<script>
+// ── Carousel ──────────────────────────────────────────────────────────────────
+const track = document.getElementById('carouselTrack');
+const slides = track.children;
+const dotsContainer = document.getElementById('dots');
+let current = 0;
+
+function buildDots(){
+  for(let i=0;i<slides.length;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' active':'');
+    d.onclick = ()=>goTo(i);
+    dotsContainer.appendChild(d);
+  }
+}
+function goTo(n){
+  current = (n + slides.length) % slides.length;
+  track.style.transform = `translateX(-${current*100}%)`;
+  [...dotsContainer.children].forEach((d,i)=>d.className='dot'+(i===current?' active':''));
+}
+document.getElementById('prevBtn').onclick = ()=>goTo(current-1);
+document.getElementById('nextBtn').onclick = ()=>goTo(current+1);
+buildDots();
+setInterval(()=>goTo(current+1), 6000);
+
+// ── Counter animation ─────────────────────────────────────────────────────────
+function animateCount(el, target, suffix=''){
+  let start = 0;
+  const step = target / 60;
+  const timer = setInterval(()=>{
+    start = Math.min(start+step, target);
+    el.textContent = Math.floor(start).toLocaleString() + suffix;
+    if(start>=target) clearInterval(timer);
+  }, 20);
+}
+setTimeout(()=>{
+  animateCount(document.getElementById('cnt-circulars'), 247);
+  animateCount(document.getElementById('cnt-alerts'), 8);
+  animateCount(document.getElementById('cnt-policies'), 1043);
+  document.getElementById('cnt-time').textContent = '4.2 min';
+}, 300);
+
+// ── Scroll reveal ─────────────────────────────────────────────────────────────
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, {threshold:0.1});
+revealEls.forEach(el=>revealObs.observe(el));
+
+// ── Chatbot ───────────────────────────────────────────────────────────────────
+const QA = [
+  {q:['kyc','know your customer','rbi kyc'],a:`📋 **RBI KYC Amendment 2024 (Circular RBI/2024-25/001)**\n\n**Key Changes:**\n• Re-verification of pre-2020 accounts via Aadhaar eKYC within **90 days**\n• Beneficial Ownership declaration for corporate accounts **> ₹10 lakh**\n• Video KYC (V-CIP) now accepted as alternative to in-person verification\n\n**Penalty:** Non-compliance attracts up to ₹1 crore per instance under PMLA\n\n**Affects:** KYC team, Loan processing, Customer onboarding`},
+  {q:['ipo','sebi ipo','disclosure','drhp'],a:`📈 **SEBI ICDR Amendment 2024 (Circular SEBI/HO/CFD/DIL/CIR/2024/002)**\n\n**Key Changes:**\n• Related-party transaction disclosure: **3 years → 5 years**\n• ESG/BRSR reporting mandatory for turnover **> ₹500 crore**\n• Merchant banker must certify DRHP under **personal liability**\n\n**Effective:** 01 January 2025\n\n**Affects:** Legal, Finance, Company Secretary, Lead Manager`},
+  {q:['filing','aoc','mgt','annual return','mca filing'],a:`🏛️ **MCA Amendment Rules 2024**\n\n**Key Changes:**\n• Listed companies: AOC-4 filing **within 45 days** of AGM (was 60)\n• XBRL tagging: **mandatory for ALL public companies**\n• New **e-CSR-1 form** for CSR spends > ₹50 lakh\n\n**Effective:** 01 October 2024\n\n**Affects:** Compliance team, Finance, Company Secretary`},
+  {q:['cyber','cybersecurity','ciscrf','ciso','vapt'],a:`🔐 **SEBI CSCRF 2024 (Circular SEBI/HO/MRD/2024/005)**\n\n**Key Requirements:**\n• Appoint **CISO** reporting directly to Board/MD\n• Cyber incident reporting: **within 6 hours** (was 24h)\n• Quarterly **VAPT** by CERT-In empanelled auditor\n• 3-year technology roadmap by **Dec 2024**\n\n**Scope:** Stock Exchanges, Depositories, QRTAs, brokers with >50K clients\n\n**Affects:** IT Security, CISO, Technology teams`},
+  {q:['npa','sma','stressed','ica','resolution'],a:`🏦 **RBI Stressed Assets Framework 2024 (RBI/2024-25/004)**\n\n**Key Changes:**\n• ICA signing deadline: **30 days → 45 days** post-SMA-2\n• Provisioning for >180 days resolution: **20% → 35%**\n• Real-time **CRILC integration** mandatory by March 2025\n\n**Affects:** Credit Risk, Treasury, Collections teams`},
+  {q:['ppirp','insolvency','msme','nclt'],a:`⚖️ **IBC Pre-Packaged Insolvency Amendment 2024**\n\n**Key Changes:**\n• PPIRP default threshold: **₹1 Cr → ₹10 Cr** (helps more MSMEs)\n• Resolution timeline: **120 days → 90 days**\n• Haircuts > 60% need **90% CoC approval** (was 75%)\n• EoI window: **15 days** from public announcement\n\n**Affects:** MSME Finance, Legal, Recovery teams`},
+  {q:['penalty','fine','non-compliance','consequence'],a:`⚠️ **Key Penalty Provisions (2024)**\n\n| Regulator | Violation | Penalty |\n|-----------|-----------|--------|\n| RBI | KYC non-compliance | Up to ₹1 Cr/instance |\n| SEBI | IPO disclosure deficiency | Merchant banker liability |\n| MCA | Late annual filing | Daily fine + adjudication |\n| SEBI | Cyber incident late reporting | Supervisory action |\n| IBC | Resolution violation | NCLT contempt proceedings |`},
+];
+
+function getBotResponse(msg){
+  const lower = msg.toLowerCase();
+  for(const qa of QA){
+    if(qa.q.some(k=>lower.includes(k))) return qa.a;
+  }
+  if(lower.includes('hello')||lower.includes('hi')||lower.includes('hey')) return "👋 Hello! I'm here to help with RBI, SEBI, and MCA compliance. What would you like to know?";
+  if(lower.includes('thank')) return "You're welcome! Stay compliant! 🛡️ Feel free to ask about any other regulatory requirements.";
+  return `I can help with **RBI**, **SEBI**, and **MCA** regulations. Try asking about:\n\n• KYC and AML requirements\n• IPO disclosure rules\n• Annual filing deadlines\n• Cybersecurity frameworks\n• NPA resolution norms\n• MSME insolvency rules\n• Compliance penalties`;
+}
+
+function formatMsg(text){
+  return text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+}
+
+function addMsg(role, text){
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  if(role==='bot'){
+    div.innerHTML = `<div class="msg-icon">🛡️</div><div class="msg-bubble">${formatMsg(text)}</div>`;
+  } else {
+    div.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-icon">👤</div>`;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping(){
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.id = 'typingIndicator';
+  div.innerHTML = `<div class="msg-icon">🛡️</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping(){
+  const t = document.getElementById('typingIndicator');
+  if(t) t.remove();
+}
+
+function sendMessage(){
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  addMsg('user', msg);
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot', getBotResponse(msg));
+  }, 800 + Math.random()*600);
+}
+
+function sendSuggestion(msg){
+  document.getElementById('chatInput').value = msg;
+  sendMessage();
+}
+
+// ── Voice Bot ─────────────────────────────────────────────────────────────────
+const VOICE_SCRIPTS = {
+  en: [
+    "This RBI circular mandates re-verification of all customer KYC documents for accounts opened before 2020. Companies must use Aadhaar-based eKYC. Beneficial ownership must be declared for corporate accounts above 10 lakh rupees. The compliance deadline is 90 days. Non-compliance may attract penalties up to 1 crore rupees under the Prevention of Money Laundering Act.",
+    "SEBI has revised its IPO disclosure rules. Companies must now disclose related-party transactions for the past 5 years, up from 3 years. ESG reporting is mandatory for companies with annual turnover above 500 crore rupees. Merchant bankers must certify DRHP documents under their personal liability.",
+    "The Ministry of Corporate Affairs has shortened annual filing deadlines. Listed companies must now file AOC-4 forms within 45 days of the AGM. All public companies must use XBRL tagging. A new e-CSR-1 form is required for CSR spending above 50 lakh rupees.",
+    "SEBI's new cybersecurity framework requires all major market participants to appoint a Chief Information Security Officer. Cyber incidents must be reported within 6 hours. Quarterly security audits by certified agencies are mandatory. A 3-year technology roadmap must be submitted by December 2024.",
+    "RBI has updated rules for resolving stressed bank loans. The Inter-Creditor Agreement must be signed within 45 days. Banks must set aside 35% provisioning for unresolved accounts after 180 days. Real-time reporting to CRILC is mandatory by March 2025."
+  ],
+  hi: [
+    "यह RBI सर्कुलर 2020 से पहले खोले गए सभी खातों के KYC दस्तावेजों की पुनः सत्यापन को अनिवार्य बनाता है। कंपनियों को आधार eKYC का उपयोग करना होगा। 10 लाख रुपये से अधिक के कॉर्पोरेट खातों के लिए लाभकारी स्वामित्व घोषणा अनिवार्य है। अनुपालन की अंतिम तारीख 90 दिन है।",
+    "SEBI ने IPO प्रकटीकरण नियमों में संशोधन किया है। अब कंपनियों को पिछले 5 वर्षों के संबंधित-पक्ष लेनदेन का खुलासा करना होगा। 500 करोड़ से अधिक टर्नओवर वाली कंपनियों के लिए ESG रिपोर्टिंग अनिवार्य है।",
+    "कॉर्पोरेट मामलों के मंत्रालय ने वार्षिक दाखिल करने की समय-सीमाओं को कम किया है। सूचीबद्ध कंपनियों को AGM के 45 दिनों के भीतर AOC-4 फॉर्म दाखिल करना होगा। सभी सार्वजनिक कंपनियों को XBRL टैगिंग का उपयोग करना होगा।",
+    "SEBI के नए साइबर सुरक्षा ढांचे में सभी प्रमुख बाजार प्रतिभागियों को मुख्य सूचना सुरक्षा अधिकारी नियुक्त करने की आवश्यकता है। साइबर घटनाओं की रिपोर्ट 6 घंटे के भीतर करनी होगी।",
+    "RBI ने बैंक ऋणों के समाधान के लिए नियम अपडेट किए हैं। अंतर-लेनदार समझौते पर 45 दिनों के भीतर हस्ताक्षर करना होगा। 180 दिनों के बाद अनसुलझे खातों के लिए 35% प्रावधान करना अनिवार्य है।"
+  ],
+  ta: [
+    "இந்த RBI சுற்றறிக்கை 2020க்கு முன் திறக்கப்பட்ட அனைத்து கணக்குகளுக்கும் KYC ஆவணங்களை மீண்டும் சரிபார்க்க கட்டாயமாக்குகிறது. ஆதார் eKYC பயன்படுத்த வேண்டும். 10 லட்ச ரூபாய்க்கு மேலான கார்ப்பரேட் கணக்குகளுக்கு பயனாளி உரிமை அறிவிப்பு கட்டாயம். 90 நாட்கள் இணக்க காலக்கெடு.",
+    "SEBI IPO வெளிப்படுத்தல் விதிகளை திருத்தியுள்ளது. நிறுவனங்கள் கடந்த 5 ஆண்டுகளின் தொடர்புடைய-கட்சி பரிவர்த்தனைகளை வெளியிட வேண்டும். 500 கோடி வருவாய் மேல் உள்ள நிறுவனங்களுக்கு ESG அறிக்கை கட்டாயம்.",
+    "ஆண்டு தாக்கல் காலக்கெடுவை குறைத்துள்ளது. பட்டியலிடப்பட்ட நிறுவனங்கள் AGM க்கு பிறகு 45 நாட்களுக்குள் AOC-4 படிவம் தாக்கல் செய்ய வேண்டும். XBRL குறியீடு அனைத்து பொது நிறுவனங்களுக்கும் கட்டாயம்."
+  ],
+  te: [
+    "ఈ RBI సర్క్యులర్ 2020 కు ముందు తెరవబడిన అన్ని ఖాతాలకు KYC పత్రాలను తిరిగి ధృవీకరించడాన్ని తప్పనిసరి చేస్తుంది. ఆధార్ eKYC ఉపయోగించాలి. 10 లక్షల రూపాయలకు మించిన కార్పొరేట్ ఖాతాలకు లబ్ధిదారు స్వామ్య ప్రకటన తప్పనిసరి. అనుపాలన గడువు 90 రోజులు.",
+    "SEBI IPO బహిర్గతం నిబంధనలను సవరించింది. గత 5 సంవత్సరాల సంబంధిత-పక్షం లావాదేవీలను వెల్లడించాలి. 500 కోట్ల టర్నోవర్ పైన ఉన్న కంపెనీలకు ESG నివేదిక తప్పనిసరి."
+  ],
+  bn: [
+    "এই RBI সার্কুলার ২০২০ এর আগে খোলা সমস্ত অ্যাকাউন্টের KYC নথি পুনরায় যাচাই বাধ্যতামূলক করে। আধার eKYC ব্যবহার করতে হবে। ১০ লক্ষ টাকার বেশি কর্পোরেট অ্যাকাউন্টের জন্য উপকারী মালিকানা ঘোষণা বাধ্যতামূলক। ৯০ দিনের মধ্যে সম্মতি করতে হবে।",
+    "SEBI আইপিও প্রকাশের নিয়ম সংশোধন করেছে। গত ৫ বছরের সম্পর্কিত-পক্ষ লেনদেন প্রকাশ করতে হবে। ৫০০ কোটি টার্নওভারের বেশি কোম্পানির জন্য ESG রিপোর্টিং বাধ্যতামূলক।"
+  ],
+  mr: [
+    "हे RBI परिपत्रक 2020 पूर्वी उघडलेल्या सर्व खात्यांचे KYC दस्तऐवज पुन्हा सत्यापित करणे अनिवार्य करते. आधार eKYC वापरणे आवश्यक आहे. 10 लाख रुपयांपेक्षा जास्त कॉर्पोरेट खात्यांसाठी लाभार्थी मालकी घोषणापत्र अनिवार्य आहे. 90 दिवसांत अनुपालन करणे आवश्यक आहे.",
+    "SEBI ने IPO प्रकटीकरण नियम सुधारित केले आहेत. कंपन्यांना गेल्या 5 वर्षांचे संबंधित-पक्ष व्यवहार उघड करावे लागतील. 500 कोटींपेक्षा जास्त उलाढाल असलेल्या कंपन्यांसाठी ESG अहवाल अनिवार्य आहे."
+  ],
+  gu: [
+    "આ RBI પરિપત્ર 2020 પહેલા ખોલવામાં આવેલ તમામ ખાતાઓ માટે KYC દસ્તાવેજોની ફરીથી ચકાસણી ફરજિયાત બનાવે છે. આધાર eKYC ઉપયોગ કરવો ફરજિયાત છે. 10 લાખ રૂપિયાથી વધુના કોર્પોરેટ ખાતા માટે લાભકારી માલિકીની ઘોષણા ફરજિયાત છે. 90 દિવસ અનુપાલન સમયગાળો.",
+    "SEBI એ IPO ખુલાસાના નિયમોમાં સુધારો કર્યો છે. કંપનીઓએ છેલ્લા 5 વર્ષના સંબંધિત-પક્ષ વ્યવહારો જાહેર કરવા પડશે. 500 કરોડ ટર્નઓવર ઉપર ESG રિપોર્ટિંગ ફરજિયાત."
+  ],
+  kn: [
+    "ಈ RBI ಸುತ್ತೋಲೆ 2020 ಕ್ಕಿಂತ ಮೊದಲು ತೆರೆದ ಎಲ್ಲ ಖಾತೆಗಳ KYC ದಾಖಲೆಗಳ ಮರು-ಪರಿಶೀಲನೆಯನ್ನು ಕಡ್ಡಾಯ ಮಾಡುತ್ತದೆ. ಆಧಾರ್ eKYC ಬಳಸಬೇಕು. 10 ಲಕ್ಷ ರೂಪಾಯಿಗಿಂತ ಹೆಚ್ಚಿನ ಕಾರ್ಪೊರೇಟ್ ಖಾತೆಗಳಿಗೆ ಲಾಭದಾಯಕ ಮಾಲೀಕತ್ವ ಘೋಷಣೆ ಕಡ್ಡಾಯ. 90 ದಿನಗಳ ಅನುಸರಣಾ ಗಡುವು.",
+    "SEBI IPO ಬಹಿರಂಗ ನಿಯಮಗಳನ್ನು ತಿದ್ದುಪಡಿ ಮಾಡಿದೆ. ಕಂಪನಿಗಳು ಕಳೆದ 5 ವರ್ಷಗಳ ಸಂಬಂಧಿತ-ಪಕ್ಷ ವ್ಯವಹಾರಗಳನ್ನು ಬಹಿರಂಗಪಡಿಸಬೇಕು. 500 ಕೋಟಿ ವಹಿವಾಟು ಮೇಲಿರುವ ಕಂಪನಿಗಳಿಗೆ ESG ವರದಿ ಕಡ್ಡಾಯ."
+  ]
+};
+
+let currentUtterance = null;
+let isPlaying = false;
+
+function setLang(code, el){
+  document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('langSelect').value = code;
+}
+
+function toggleVoice(){
+  if(isPlaying) stopVoice();
+  else playVoiceExplanation();
+}
+
+function stopVoice(){
+  if(currentUtterance) speechSynthesis.cancel();
+  isPlaying = false;
+  document.getElementById('voiceOrb').classList.remove('active');
+  document.querySelectorAll('.wave-bar').forEach(b=>b.classList.add('stopped'));
+}
+
+function playVoiceExplanation(){
+  const regIdx = parseInt(document.getElementById('regSelect').value);
+  const lang = document.getElementById('langSelect').value;
+
+  const scripts = VOICE_SCRIPTS[lang] || VOICE_SCRIPTS['en'];
+  const script = scripts[regIdx] || scripts[0];
+
+  document.getElementById('voiceTranscript').innerHTML = `<strong style="color:var(--teal);font-size:0.75rem;">📝 TRANSCRIPT (${lang.toUpperCase()})</strong><br><br>${script}`;
+
+  if('speechSynthesis' in window){
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(script);
+    utterance.lang = lang + '-IN';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+
+    const voices = speechSynthesis.getVoices();
+    const match = voices.find(v=>v.lang.startsWith(lang));
+    if(match) utterance.voice = match;
+
+    utterance.onstart = ()=>{
+      isPlaying = true;
+      document.getElementById('voiceOrb').classList.add('active');
+      document.querySelectorAll('.wave-bar').forEach(b=>b.classList.remove('stopped'));
+    };
+    utterance.onend = ()=>{ isPlaying=false; stopVoice(); };
+    utterance.onerror = ()=>{ isPlaying=false; stopVoice(); };
+
+    currentUtterance = utterance;
+    speechSynthesis.speak(utterance);
+  } else {
+    document.getElementById('voiceTranscript').innerHTML += '<br><br><em style="color:var(--muted);">⚠️ Speech synthesis not supported in this browser. Please use Chrome or Edge.</em>';
+  }
+}
+
+// ── Analysis ─────────────────────────────────────────────────────────────────
+const IMPACT_DATA = [
+  {title:"KYC & Onboarding Policy",reg:"RBI KYC 2024",impacted:["eKYC verification flow","Beneficial ownership form","Account opening SOP","AML screening process"],risk:"HIGH",actions:["Update KYC form to include V-CIP option","Add beneficial ownership declaration for corporate accounts","Re-verify all pre-2020 accounts within 90 days","Train onboarding team on new requirements"]},
+  {title:"Loan Origination Policy",reg:"RBI KYC 2024",impacted:["Pre-loan KYC check","Loan agreement clause 3.1","Digital loan journey","Compliance sign-off process"],risk:"HIGH",actions:["Add mandatory KYC re-check before loan disbursement","Update loan agreement template","Revise SOP-LOAN-003 for KYC dependency","Brief credit team on new requirements"]},
+  {title:"IPO Compliance Policy",reg:"SEBI ICDR 2024",impacted:["DRHP preparation checklist","RPT disclosure section","ESG/BRSR reporting","Merchant banker engagement"],risk:"HIGH",actions:["Extend RPT review period from 3 to 5 years","Engage ESG consultant for BRSR preparation","Update merchant banker LOA to include personal liability clause","Revise IPO readiness checklist"]},
+  {title:"NPA Management Policy",reg:"RBI Stressed Assets 2024",impacted:["ICA timeline tracking","SMA provisioning schedule","CRILC reporting system","Resolution plan approval"],risk:"HIGH",actions:["Update ICA tracking tool to 45-day deadline","Increase provision reserve to 35% for >180 day accounts","Integrate with CRILC real-time API by Q1 2025","Brief Credit Committee on new approval thresholds"]},
+  {title:"Cybersecurity Policy",reg:"SEBI CSCRF 2024",impacted:["Incident response SOP","CISO reporting line","VAPT schedule","Technology roadmap"],risk:"HIGH",actions:["Appoint CISO with direct Board reporting line","Update IRT to target 6-hour breach notification","Schedule quarterly VAPT with CERT-In auditor","Submit 3-year tech roadmap to SEBI by Dec 2024"]},
+  {title:"CSR Policy",reg:"MCA Amendment 2024",impacted:["CSR spend reporting","e-CSR-1 filing","CSR Committee oversight","Annual Board Report"],risk:"MEDIUM",actions:["File e-CSR-1 form for spends above ₹50 lakh","Update CSR report template for Board Report","Brief CSR Committee on new filing requirements","Set calendar reminder for CSR compliance dates"]},
+];
+
+function analyzeImpact(idx){
+  document.querySelectorAll('.policy-item').forEach((el,i)=>{
+    el.style.borderColor = i===idx ? 'var(--teal)' : '';
+    el.style.background = i===idx ? 'rgba(0,180,162,0.08)' : '';
+  });
+  const d = IMPACT_DATA[idx];
+  const riskColor = d.risk==='HIGH'?'#FF6B6B':d.risk==='MEDIUM'?'var(--gold)':'#50C878';
+  document.getElementById('impactOutput').innerHTML = `
+    <div class="point"><span class="point-label">REGULATORY TRIGGER</span>${d.reg} — Matched to ${d.title}</div>
+    <div class="point"><span class="point-label">IMPACTED AREAS</span>${d.impacted.map(x=>`• ${x}`).join('<br>')}</div>
+    <div class="point"><span class="point-label">RISK LEVEL</span><span style="color:${riskColor};font-weight:700;font-size:1rem;">${d.risk}</span></div>
+    <div class="point"><span class="point-label">RECOMMENDED ACTIONS</span>${d.actions.map((x,i)=>`${i+1}. ${x}`).join('<br>')}</div>
+  `;
+}
+
+// ── Reports ───────────────────────────────────────────────────────────────────
+const REPORTS = [
+  {id:"RPT-20241115",source:"RBI",title:"KYC Amendment 2024",risk:"High",risk_score:9,impacted:["KYC Team","Loan Processing","Customer Onboarding","AML Screening"],deadline:"90 days",action:"Re-verify pre-2020 accounts; update beneficial ownership forms; implement V-CIP",status:"Pending Review"},
+  {id:"RPT-20241028",source:"SEBI",title:"IPO Enhanced Disclosures",risk:"High",risk_score:8,impacted:["Legal","Finance","Company Secretary","Lead Manager"],deadline:"01 January 2025",action:"Extend RPT review to 5 years; prepare BRSR; update merchant banker LOA",status:"In Progress"},
+  {id:"RPT-20240910",source:"MCA",title:"Annual Filing Amendment",risk:"Medium",risk_score:5,impacted:["Compliance","Finance","Company Secretary"],deadline:"01 October 2024",action:"Update filing calendar; implement XBRL; register for e-CSR-1",status:"Completed"},
+  {id:"RPT-20240705",source:"SEBI",title:"Cybersecurity Framework CSCRF",risk:"High",risk_score:9,impacted:["IT Security","CISO","Technology","Board"],deadline:"31 December 2024",action:"Appoint CISO; update IRT; schedule VAPT; submit tech roadmap",status:"In Progress"},
+  {id:"RPT-20240822",source:"RBI",title:"Stressed Assets Framework",risk:"High",risk_score:8,impacted:["Credit Risk","Treasury","Collections","CRILC Team"],deadline:"31 March 2025",action:"Update ICA tracking; increase provisions; integrate CRILC API",status:"Pending Review"},
+];
+
+function colorJson(obj){
+  return JSON.stringify(obj, null, 2)
+    .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+    .replace(/: "([^"]+)"/g, ': <span class="json-str">"$1"</span>')
+    .replace(/: (\d+)/g, ': <span class="json-num">$1</span>');
+}
+
+function showReport(idx, el){
+  document.querySelectorAll('.report-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+  const r = REPORTS[idx];
+  const report = {
+    report_id: r.id,
+    generated_at: new Date().toISOString(),
+    regulation: { source: r.source, title: r.title },
+    impact_assessment: { impacted_areas: r.impacted, risk_level: r.risk, risk_score: r.risk_score },
+    recommended_actions: r.action,
+    compliance_deadline: r.deadline,
+    status: r.status
+  };
+  document.getElementById('reportJson').innerHTML = colorJson(report);
+}
+
+// Init
+analyzeImpact(0);
+showReport(0, document.querySelector('.report-item'));
+</script>
+</body>
+</html>
